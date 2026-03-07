@@ -84,11 +84,16 @@ def fix_dtypes(df):
     
     # Astype
     astype_dict = {
-        'customer_zipcode': 'Int64',
+        'customer_zipcode': 'str',
         'late_delivery_risk': 'boolean',
         'order_status': 'category',
         'shipping_mode': 'category',
-        'type': 'category'
+        'category_name': 'category',
+        'department_name': 'category',
+        'market': 'category',
+        'type': 'category',
+        'delivery_status': 'category',
+        'customer_segment': 'category',
     }
     
     for col,dtype in astype_dict.items():

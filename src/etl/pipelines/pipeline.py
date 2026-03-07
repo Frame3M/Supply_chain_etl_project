@@ -1,7 +1,7 @@
 from etl.extract.extract_files import extract_from_csv
-from etl.transform.normalize import standarize_columns
-from etl.transform.cleaning import clean_strings, fix_dtypes, remove_duplicates, drop_rows_with_nulls, fill_missing_zipcode
-from etl.transform.validate import validate_non_negative_columns, validate_date_order, validate_not_null, validate_not_future_date, validate_item_quantity_not_zero
+from etl.transform.silver.normalize import standarize_columns
+from etl.transform.silver.cleaning import clean_strings, fix_dtypes, remove_duplicates, drop_rows_with_nulls, fill_missing_zipcode
+from etl.transform.silver.validate import validate_non_negative_columns, validate_date_order, validate_not_null, validate_not_future_date, validate_item_quantity_not_zero
 from etl.load.save_files import save_to_csv
 from utils.logger import log_header, get_logger
 
