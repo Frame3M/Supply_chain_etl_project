@@ -1,112 +1,230 @@
 import pandas as pd
-import numpy as np
 
 #########################################################################################
 
-def build_category(df):
+def build_dim_customer(df) -> pd.DataFrame:
     """
     Docstring for build_category
     
     :param df: Description
     """
     
-    category = df[[
-        'category_id',
-        'category_name'
-    ]].drop_duplicates().copy()
-    
-    return category
-
-#########################################################################################
-
-def build_department(df):
-    """
-    Docstring for build_department
-    
-    :param df: Description
-    """
-    
-    department = df[[
-        'department_id',
-        'department_name'
-    ]].drop_duplicates().copy()
-    
-    return department
-
-#########################################################################################
-
-def build_product(df):
-    """
-    Docstring for build_product
-    
-    :param df: Description
-    """
-    
-    product = df[[
-        'product_card_id',
-        'product_name',
-        'product_price',
-        'category_id',
-        'department_id'
-    ]]\
-    .drop_duplicates()\
-    .rename(columns={
-        'product_card_id': 'product_id'
-    })\
-    .copy()
-    
-    return product
-
-#########################################################################################
-
-def build_segment(df):
-    """
-    Docstring for build_segment
-    
-    :param df: Description
-    """
-    
-    segment = df[[
+    dim_customer = df[[
+        'customer_id',
+        'customer_fname',
+        'customer_lname',
+        'customer_country',
+        'customer_state',
+        'customer_city',
+        'customer_street',
+        'customer_zipcode',
+        'longitude',
+        'latitude',
         'customer_segment'
     ]]\
     .drop_duplicates()\
     .reset_index(drop=True)\
     .rename(columns={
-        'customer_segment': 'segment'
+        'customer_fname': 'first_name',
+        'customer_lname': 'last_name',
     })\
     .copy()
     
-    segment['segment_id'] = segment.index + 1
+    dim_customer.columns = [col.replace('customer_id', '') if col != 'customer_id' else col for col in dim_customer.columns]
     
-    return segment
+    return dim_customer
 
 #########################################################################################
 
-def build_customer(df, segment):
+def build_dim_product(df) -> pd.DataFrame:
     """
-    Docstring for build_customer
+    Docstring for build_category
     
     :param df: Description
-    :param segment: Description
     """
     
-    customer = df[[
-        'customer_id',
-        'customer_fname',
-        'customer_lname',
-        'customer_segment',
-        'customer_city',
-        'customer_state',
-        'customer_country',
-        'customer_zipcode'
+    dim_product = df[[
+        'product_card_id',
+        'product_name',
+        'product_price',
+        'category_name',
+        'department_name'
     ]]\
     .drop_duplicates()\
+    .reset_index(drop=True)\
+    .rename(columns={
+        'product_card_id' : 'product_id',
+        'product_price': 'unit_price'
+    })\
     .copy()
     
-    customer = customer.merge(segment, on='segment', how='left')
+    return dim_product
+
+#########################################################################################
+
+def build_dim_location(df) -> pd.DataFrame:
+    """
+    Docstring for build_category
     
-    customer = customer.drop(columns=['customer_segment'])
+    :param df: Description
+    """
     
-    return customer
+    dim_location = df[[
+        'market',
+        'order_country',
+        'order_region',
+        'order_state',
+        'order_city',
+        'order_zipcode'
+    ]]\
+    .drop_duplicates()\
+    .reset_index(drop=True)\
+    .copy()
+    
+    dim_location.columns = dim_location.columns.str.replace('order_', '')
+    dim_location.insert(0, 'location_id', dim_location.index + 1)
+    
+    return dim_location
+    
+
+#########################################################################################
+
+def build_dim_calendar(df) -> pd.DataFrame:
+    """
+    Docstring for build_category
+    
+    :param df: Description
+    """
+    
+    dates = df['order_date_dateorders']
+    
+    min_year = dates.dt.year.min()
+    max_year = dates.dt.year.max()
+    
+    start_date = f'{min_year}-01-01'
+    end_date = f'{max_year}-12-31'
+
+    date_range = pd.date_range(start=start_date, end=end_date, freq='D')
+    
+    dim_calendar = pd.DataFrame({'date': date_range})
+    
+    dim_calendar['date_sk'] = dim_calendar['date'].dt.strftime('%Y%m%d').astype('int')
+    dim_calendar['year_num'] = dim_calendar['date'].dt.year
+    dim_calendar['quarter_num'] = dim_calendar['date'].dt.quarter
+    dim_calendar['month_num'] = dim_calendar['date'].dt.month
+    dim_calendar['weeknum_num'] = dim_calendar['date'].dt.isocalendar().week.astype('int')
+    dim_calendar['weekday_num'] = dim_calendar['date'].dt.dayofweek + 1
+    dim_calendar['day_num'] = dim_calendar['date'].dt.day
+    
+    dim_calendar['quarter'] = 'Q' + dim_calendar['date'].dt.quarter.astype('str')
+    dim_calendar['month'] = dim_calendar['date'].dt.strftime('%B')
+    dim_calendar['short_month'] = dim_calendar['date'].dt.strftime('%b')
+    dim_calendar['day'] = dim_calendar['date'].dt.strftime('%A')
+    dim_calendar['short_day'] = dim_calendar['date'].dt.strftime('%a')
+    
+    dim_calendar['date'] = dim_calendar['date'].dt.date
+    
+    return dim_calendar
+    
+#########################################################################################
+
+def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFrame:
+    """
+    Docstring for build_category
+    
+    :param df: Description
+    """
+    
+    fact_sales = df[[
+        'order_id',
+        'order_item_id',
+        'order_item_cardprod_id',
+        'order_item_quantity',
+        'order_item_product_price',
+        'order_item_discount',
+        'sales',
+        'order_item_total',
+        'order_profit_per_order',
+        'order_date_dateorders',
+        'order_customer_id',
+        'type',
+        'order_status',
+        'shipping_mode',
+        'shipping_date_dateorders',
+        'late_delivery_risk',
+        'delivery_status',
+        'days_for_shipment_scheduled',
+        'days_for_shipping_real',
+        
+        'market',
+        'order_country',
+        'order_region',
+        'order_state',
+        'order_city',
+        'order_zipcode'
+    ]]\
+    .drop_duplicates()\
+    .reset_index(drop=True)\
+    .rename(columns={
+       'order_item_id': 'order_detail_id',
+       'order_item_cardprod_id': 'product_id',
+       'order_item_quantity': 'quantity',
+       'order_item_product_price': 'unit_price',
+       'order_item_discount': 'discount',
+       'sales': 'gross_amount',
+       'order_item_total': 'net_amount',
+       'order_profit_per_order': 'profit',
+       'order_date_dateorders': 'order_date',
+       'order_customer_id': 'customer_id',
+       'type': 'payment_type',
+       'shipping_date_dateorders': 'shipping_date',
+    })\
+    .copy()
+    
+    fact_sales_col = ['market', 'order_country', 'order_region', 'order_state', 'order_city', 'order_zipcode']
+    dim_loc_col = ['market', 'country', 'region', 'state', 'city', 'zipcode']
+    
+    fact_sales = fact_sales.merge(
+        dim_location,
+        left_on=fact_sales_col,
+        right_on=dim_loc_col,
+        how='left'
+    )
+    
+    fact_sales['order_date'] = pd.to_datetime(fact_sales['order_date']).dt.date
+    fact_sales['shipping_date'] = pd.to_datetime(fact_sales['shipping_date']).dt.date
+    
+    final_cols = ['order_id', 'order_detail_id', 'product_id', 'quantity', 'unit_price', 'discount', 'gross_amount', 'net_amount', 'profit',
+                  'order_date', 'customer_id', 'payment_type', 'order_status', 'location_id', 'shipping_mode', 'shipping_date', 'late_delivery_risk',
+                  'delivery_status', 'days_for_shipment_scheduled', 'days_for_shipping_real']
+    
+    return fact_sales[final_cols]
+    
+
+#########################################################################################
+
+def build_gold_layer(df) -> dict:
+    """
+    Docstring for build_category
+    
+    :param df: Description
+    """
+    
+    dim_customer = build_dim_customer(df)
+    dim_product = build_dim_product(df)
+    dim_location = build_dim_location(df)
+    dim_calendar = build_dim_calendar(df)
+    
+    fact_sales = build_fact_sales(df, dim_location)
+    
+    gold_tables = {
+        'dim_customer': dim_customer,
+        'dim_product': dim_product,
+        'dim_location': dim_location,
+        'dim_calendar': dim_calendar,
+        'fact_sales': fact_sales
+    }
+    
+    return gold_tables
 
 #########################################################################################
