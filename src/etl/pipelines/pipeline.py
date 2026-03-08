@@ -3,6 +3,7 @@ from etl.transform.silver.normalize import standarize_columns
 from etl.transform.silver.cleaning import clean_strings, fix_dtypes, remove_duplicates, drop_rows_with_nulls, fill_missing_zipcode
 from etl.transform.silver.validate import validate_non_negative_columns, validate_date_order, validate_not_null, validate_not_future_date, validate_item_quantity_not_zero
 from etl.load.save_files import save_to_csv
+from etl.transform.gold.build import build_gold_layer
 from utils.logger import log_header, get_logger
 
 logger = get_logger(__name__)
@@ -36,8 +37,14 @@ def run_pipeline():
         validate_date_order(df, 'order_date_dateorders', 'shipping_date_dateorders')
         validate_not_future_date(df)
         
-        # Save
+        # Save Silver
         save_to_csv(df, save_path= '../../../data/silver/supply_chain_silver.csv')
+        
+        # Create gold tables
+        gold_dict = build_gold_layer(df)
+        
+        
+        
         
     except Exception as e:
         logger.error("Execution stopped because of an error", exc_info=True)

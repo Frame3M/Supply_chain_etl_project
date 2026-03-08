@@ -27,6 +27,7 @@ def build_dim_customer(df) -> pd.DataFrame:
     .rename(columns={
         'customer_fname': 'first_name',
         'customer_lname': 'last_name',
+        'customer_state': 'state_name'
     })\
     .copy()
     
@@ -54,7 +55,9 @@ def build_dim_product(df) -> pd.DataFrame:
     .reset_index(drop=True)\
     .rename(columns={
         'product_card_id' : 'product_id',
-        'product_price': 'unit_price'
+        'product_price': 'unit_price',
+        'category_name': 'category',
+        'department_name': 'department'
     })\
     .copy()
     
@@ -79,6 +82,9 @@ def build_dim_location(df) -> pd.DataFrame:
     ]]\
     .drop_duplicates()\
     .reset_index(drop=True)\
+    .rename(columns={
+       'order_state': 'state_name' 
+    })\
     .copy()
     
     dim_location.columns = dim_location.columns.str.replace('order_', '')
@@ -106,23 +112,23 @@ def build_dim_calendar(df) -> pd.DataFrame:
 
     date_range = pd.date_range(start=start_date, end=end_date, freq='D')
     
-    dim_calendar = pd.DataFrame({'date': date_range})
+    dim_calendar = pd.DataFrame({'full_date': date_range})
     
-    dim_calendar['date_sk'] = dim_calendar['date'].dt.strftime('%Y%m%d').astype('int')
-    dim_calendar['year_num'] = dim_calendar['date'].dt.year
-    dim_calendar['quarter_num'] = dim_calendar['date'].dt.quarter
-    dim_calendar['month_num'] = dim_calendar['date'].dt.month
-    dim_calendar['weeknum_num'] = dim_calendar['date'].dt.isocalendar().week.astype('int')
-    dim_calendar['weekday_num'] = dim_calendar['date'].dt.dayofweek + 1
-    dim_calendar['day_num'] = dim_calendar['date'].dt.day
+    dim_calendar['date_sk'] = dim_calendar['full_date'].dt.strftime('%Y%m%d').astype('int')
+    dim_calendar['year_num'] = dim_calendar['full_date'].dt.year
+    dim_calendar['quarter_num'] = dim_calendar['full_date'].dt.quarter
+    dim_calendar['month_num'] = dim_calendar['full_date'].dt.month
+    dim_calendar['weeknum_num'] = dim_calendar['full_date'].dt.isocalendar().week.astype('int')
+    dim_calendar['weekday_num'] = dim_calendar['full_date'].dt.dayofweek + 1
+    dim_calendar['day_num'] = dim_calendar['full_date'].dt.day
     
-    dim_calendar['quarter'] = 'Q' + dim_calendar['date'].dt.quarter.astype('str')
-    dim_calendar['month'] = dim_calendar['date'].dt.strftime('%B')
-    dim_calendar['short_month'] = dim_calendar['date'].dt.strftime('%b')
-    dim_calendar['day'] = dim_calendar['date'].dt.strftime('%A')
-    dim_calendar['short_day'] = dim_calendar['date'].dt.strftime('%a')
+    dim_calendar['quarter_name'] = 'Q' + dim_calendar['full_date'].dt.quarter.astype('str')
+    dim_calendar['month_name'] = dim_calendar['full_date'].dt.strftime('%B')
+    dim_calendar['short_month'] = dim_calendar['full_date'].dt.strftime('%b')
+    dim_calendar['day_name'] = dim_calendar['full_date'].dt.strftime('%A')
+    dim_calendar['short_day'] = dim_calendar['full_date'].dt.strftime('%a')
     
-    dim_calendar['date'] = dim_calendar['date'].dt.date
+    dim_calendar['full_date'] = dim_calendar['full_date'].dt.date
     
     return dim_calendar
     
