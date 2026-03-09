@@ -4,6 +4,7 @@ from etl.transform.silver.cleaning import clean_strings, fix_dtypes, remove_dupl
 from etl.transform.silver.validate import validate_non_negative_columns, validate_date_order, validate_not_null, validate_not_future_date, validate_item_quantity_not_zero
 from etl.load.save_files import save_to_csv
 from etl.transform.gold.build import build_gold_layer
+from etl.load.load_gold import load_gold_to_supabase
 from utils.logger import log_header, get_logger
 
 logger = get_logger(__name__)
@@ -43,6 +44,8 @@ def run_pipeline():
         # Create gold tables
         gold_dict = build_gold_layer(df)
         
+        # Save Gold
+        load_gold_to_supabase(gold_dict)
         
         
         
