@@ -47,8 +47,6 @@ def run_pipeline():
         # Save Gold
         load_gold_to_supabase(gold_dict)
         
-        
-        
     except Exception as e:
         logger.error("Execution stopped because of an error", exc_info=True)
         raise
