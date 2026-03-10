@@ -1,4 +1,7 @@
 import pandas as pd
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 #########################################################################################
 
@@ -8,6 +11,8 @@ def build_dim_customer(df: pd.DataFrame) -> pd.DataFrame:
     
     :param df: DataFrame
     """
+    
+    logger.info("Starting the construction of dim_customer...")
     
     dim_customer = df[[
         'customer_id',
@@ -33,6 +38,8 @@ def build_dim_customer(df: pd.DataFrame) -> pd.DataFrame:
     
     dim_customer.columns = [col.replace('customer_id', '') if col != 'customer_id' else col for col in dim_customer.columns]
     
+    logger.info(f"dim_customer successfully built with {dim_customer.shape(0)} rows and {dim_customer.shape(1)} columns.")
+    
     return dim_customer
 
 #########################################################################################
@@ -43,6 +50,8 @@ def build_dim_product(df: pd.DataFrame) -> pd.DataFrame:
     
     :param df: DataFrame
     """
+    
+    logger.info("Starting the construction of dim_product...")
     
     dim_product = df[[
         'product_card_id',
@@ -61,6 +70,8 @@ def build_dim_product(df: pd.DataFrame) -> pd.DataFrame:
     })\
     .copy()
     
+    logger.info(f"dim_product successfully built with {dim_product.shape(0)} rows and {dim_product.shape(1)} columns.")
+    
     return dim_product
 
 #########################################################################################
@@ -71,6 +82,8 @@ def build_dim_location(df: pd.DataFrame) -> pd.DataFrame:
     
     :param df: DataFrame
     """
+    
+    logger.info("Starting the construction of dim_location...")
     
     dim_location = df[[
         'market',
@@ -90,6 +103,8 @@ def build_dim_location(df: pd.DataFrame) -> pd.DataFrame:
     dim_location.columns = dim_location.columns.str.replace('order_', '')
     dim_location.insert(0, 'location_id', dim_location.index + 1)
     
+    logger.info(f"dim_location successfully built with {dim_location.shape(0)} rows and {dim_location.shape(1)} columns.")
+    
     return dim_location
     
 
@@ -101,6 +116,8 @@ def build_dim_calendar(df: pd.DataFrame) -> pd.DataFrame:
     
     :param df: DataFrame
     """
+    
+    logger.info("Starting the construction of dim_calendar...")
     
     dates = df['order_date_dateorders']
     
@@ -130,6 +147,8 @@ def build_dim_calendar(df: pd.DataFrame) -> pd.DataFrame:
     
     dim_calendar['full_date'] = dim_calendar['full_date'].dt.date
     
+    logger.info(f"dim_calendar successfully built with {dim_calendar.shape(0)} rows and {dim_calendar.shape(1)} columns.")
+    
     return dim_calendar
     
 #########################################################################################
@@ -141,6 +160,8 @@ def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFra
     :param df: DataFrame
     :param dim_location: Location DataFrame for obtaining location
     """
+    
+    logger.info("Starting the construction of fact_sales...")
     
     fact_sales = df[[
         'order_id',
@@ -205,6 +226,8 @@ def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFra
                   'order_date', 'customer_id', 'payment_type', 'order_status', 'location_id', 'shipping_mode', 'shipping_date', 'late_delivery_risk',
                   'delivery_status', 'days_for_shipment_scheduled', 'days_for_shipping_real']
     
+    logger.info(f"fact_sales successfully built with {fact_sales.shape(0)} rows and {fact_sales.shape(1)} columns.")
+    
     return fact_sales[final_cols]
     
 
@@ -216,6 +239,8 @@ def build_gold_layer(df: pd.DataFrame) -> dict:
     
     :param df: DataFrame
     """
+    
+    logger.info("Starting Gold layer construction process...")
     
     dim_customer = build_dim_customer(df)
     dim_product = build_dim_product(df)
@@ -231,6 +256,8 @@ def build_gold_layer(df: pd.DataFrame) -> dict:
         'dim_calendar': dim_calendar,
         'fact_sales': fact_sales
     }
+    
+    logger.info("Gold layer packaged and ready to load.")
     
     return gold_tables
 
