@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 
 #########################################################################################
 
-def get_supabase_engine():
+def get_supabase_engine() -> None:
     """
-    
+    "Creation of a connection to the Supabase database
     """
     
     load_dotenv()
@@ -22,9 +22,11 @@ def get_supabase_engine():
     
 #########################################################################################
 
-def load_gold_to_supabase(gold_dict: dict):
+def load_gold_to_supabase(gold_dict: dict) -> None:
     """
+    Loading Gold tables into the Supabase database
     
+    :param gold_dict: Dictionary containing Gold tables
     """
     
     engine = get_supabase_engine()

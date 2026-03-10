@@ -2,11 +2,11 @@ import pandas as pd
 
 #########################################################################################
 
-def build_dim_customer(df) -> pd.DataFrame:
+def build_dim_customer(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Docstring for build_category
+    Creation of the Gold Customer table
     
-    :param df: Description
+    :param df: DataFrame
     """
     
     dim_customer = df[[
@@ -37,11 +37,11 @@ def build_dim_customer(df) -> pd.DataFrame:
 
 #########################################################################################
 
-def build_dim_product(df) -> pd.DataFrame:
+def build_dim_product(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Docstring for build_category
+    Creation of the Gold Product table
     
-    :param df: Description
+    :param df: DataFrame
     """
     
     dim_product = df[[
@@ -65,11 +65,11 @@ def build_dim_product(df) -> pd.DataFrame:
 
 #########################################################################################
 
-def build_dim_location(df) -> pd.DataFrame:
+def build_dim_location(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Docstring for build_category
+    Creation of the Gold Location table
     
-    :param df: Description
+    :param df: DataFrame
     """
     
     dim_location = df[[
@@ -95,11 +95,11 @@ def build_dim_location(df) -> pd.DataFrame:
 
 #########################################################################################
 
-def build_dim_calendar(df) -> pd.DataFrame:
+def build_dim_calendar(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Docstring for build_category
+    Creation of the Gold Calendar table
     
-    :param df: Description
+    :param df: DataFrame
     """
     
     dates = df['order_date_dateorders']
@@ -136,9 +136,10 @@ def build_dim_calendar(df) -> pd.DataFrame:
 
 def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFrame:
     """
-    Docstring for build_category
+    Creation of the Gold Sales table
     
-    :param df: Description
+    :param df: DataFrame
+    :param dim_location: Location DataFrame for obtaining location
     """
     
     fact_sales = df[[
@@ -209,11 +210,11 @@ def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFra
 
 #########################################################################################
 
-def build_gold_layer(df) -> dict:
+def build_gold_layer(df: pd.DataFrame) -> dict:
     """
-    Docstring for build_category
+    Creation of all Gold-layer tables
     
-    :param df: Description
+    :param df: DataFrame
     """
     
     dim_customer = build_dim_customer(df)

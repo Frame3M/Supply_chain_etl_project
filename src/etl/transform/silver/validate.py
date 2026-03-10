@@ -5,7 +5,7 @@ logger = get_logger(__name__)
 
 #########################################################################################
 
-def validate_non_negative_columns(df, except_cols= []):
+def validate_non_negative_columns(df: pd.DataFrame, except_cols: list[str] = []) -> None:
     """
     Check numeric columns for non-negative values
     
@@ -24,7 +24,7 @@ def validate_non_negative_columns(df, except_cols= []):
         
 #########################################################################################
 
-def validate_date_order(df, start_date, end_date):
+def validate_date_order(df: pd.DataFrame, start_date: str, end_date: str) -> None:
     """
     Check that dates are in the correct order
     
@@ -42,7 +42,7 @@ def validate_date_order(df, start_date, end_date):
     
 #########################################################################################
 
-def validate_not_null(df, columns):
+def validate_not_null(df: pd.DataFrame, columns: list[str]) -> None:
     """
     Validate that there are no null values
     
@@ -60,7 +60,7 @@ def validate_not_null(df, columns):
         
 #########################################################################################
 
-def validate_not_future_date(df):
+def validate_not_future_date(df: pd.DataFrame) -> None:
     """
     Validate that there are no future dates
     
@@ -80,7 +80,7 @@ def validate_not_future_date(df):
 
 #########################################################################################
         
-def validate_item_quantity_not_zero(df):
+def validate_item_quantity_not_zero(df: pd.DataFrame) -> None:
     """
     Validate that the 'item_quantity' column has no zero values
     

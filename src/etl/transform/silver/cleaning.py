@@ -6,7 +6,7 @@ logger = get_logger(__name__)
 
 #########################################################################################
 
-def clean_strings(df):
+def clean_strings(df: pd.DataFrame) -> pd.DataFrame:
     """
     Basic text cleaning
     
@@ -66,7 +66,7 @@ def clean_strings(df):
 
 #########################################################################################
 
-def fix_dtypes(df):
+def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     """
     Data type conversion
     
@@ -132,7 +132,7 @@ def fix_dtypes(df):
 
 #########################################################################################
 
-def remove_duplicates(df):
+def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
     Drop duplicate rows
     
@@ -156,7 +156,7 @@ def remove_duplicates(df):
 
 #########################################################################################
 
-def drop_rows_with_nulls(df, subset=[]):
+def drop_rows_with_nulls(df: pd.DataFrame, subset: list[str] = []) -> pd.DataFrame:
     """
     Drop NaN rows
     
@@ -185,7 +185,7 @@ def drop_rows_with_nulls(df, subset=[]):
 
 #########################################################################################
 
-def fill_missing_zipcode(df):
+def fill_missing_zipcode(df: pd.DataFrame) -> pd.DataFrame:
     """
     Fill missing values in customer_zipcode with 'Unknown'
     

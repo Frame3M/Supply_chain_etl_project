@@ -6,7 +6,7 @@ logger = get_logger(__name__)
 
 #########################################################################################
 
-def standarize_columns(df):
+def standarize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Function to standarize columns
     
