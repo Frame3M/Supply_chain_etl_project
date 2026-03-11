@@ -21,7 +21,7 @@ def run_pipeline() -> None:
     
     try:
         # Extract data
-        df_raw = extract_from_csv(path= '../../../data/raw/supply_chain_raw.csv', encoding= 'cp1252')
+        df_raw = extract_from_csv(path= 'data/raw/supply_chain_raw.csv', encoding= 'cp1252')
         
         # Transformations
         df = standarize_columns(df_raw)
@@ -39,7 +39,7 @@ def run_pipeline() -> None:
         validate_not_future_date(df)
         
         # Save Silver
-        save_to_csv(df, save_path= '../../../data/silver/supply_chain_silver.csv')
+        save_to_csv(df, save_path= 'data/silver/supply_chain_silver.csv')
         
         # Create gold tables
         gold_dict = build_gold_layer(df)
