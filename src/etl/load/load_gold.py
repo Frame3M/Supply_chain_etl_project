@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
-from utils.logger import get_logger
+from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
