@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS gold.dim_product(
 	product_name VARCHAR(155),
 	unit_price NUMERIC(10,2),
 	category VARCHAR(155),
-	deparment VARCHAR(155)
+	department VARCHAR(155)
 );
 
 CREATE TABLE IF NOT EXISTS gold.dim_location(

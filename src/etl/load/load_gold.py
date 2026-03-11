@@ -50,14 +50,13 @@ def load_gold_to_supabase(gold_dict: dict) -> None:
                 schema='gold',
                 if_exists='append',
                 index=False,
-                method='multi',
-                chunksize=5000
+                chunksize=1000
             )
             
             logger.info(f"Table {table_name} loaded successfully")
             
         except Exception as e:
-            logger.error(f"Error loading table {table_name} into the database")
+            logger.error(f"Error loading table {table_name} into the database: {e}")
             raise
         
 #########################################################################################

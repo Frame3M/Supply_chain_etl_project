@@ -1,0 +1,712 @@
+2026-03-11 00:03:15,588 - INFO - __main__ - Starting ETL execution
+
+============================================================
+NEW EXECUTION PIPELINE - 2026-03-11 00:03:15
+
+============================================================
+2026-03-11 00:03:15,588 - INFO - src.etl.pipelines.pipeline - Pipeline Start
+2026-03-11 00:03:15,588 - INFO - src.etl.extract.extract_files - Reading CSV file: data/raw/supply_chain_raw.csv
+2026-03-11 00:03:16,952 - INFO - src.etl.extract.extract_files - Successfully read file: data/raw/supply_chain_raw.csv
+2026-03-11 00:03:16,952 - INFO - src.etl.transform.silver.normalize - Standardizing column names
+2026-03-11 00:03:16,994 - INFO - src.etl.transform.silver.normalize - Standardization completed
+2026-03-11 00:03:16,995 - INFO - src.etl.transform.silver.cleaning - Cleaning string values
+2026-03-11 00:03:18,362 - INFO - src.etl.transform.silver.cleaning - String cleaning completed
+2026-03-11 00:03:18,372 - INFO - src.etl.transform.silver.cleaning - Fixing data types
+2026-03-11 00:03:19,199 - INFO - src.etl.transform.silver.cleaning - Data type correction completed
+2026-03-11 00:03:19,236 - INFO - src.etl.transform.silver.cleaning - Dropping complete duplicates
+2026-03-11 00:03:19,675 - INFO - src.etl.transform.silver.cleaning - Complete duplicates removed
+2026-03-11 00:03:19,694 - INFO - src.etl.transform.silver.cleaning - Removing null values from columns: ['customer_lname', 'customer_zipcode']
+2026-03-11 00:03:19,803 - INFO - src.etl.transform.silver.cleaning - Null values removed
+2026-03-11 00:03:19,826 - INFO - src.etl.transform.silver.cleaning - Filling nulls in 'customer_zipcode' with 'Unknown'
+2026-03-11 00:03:19,865 - INFO - src.etl.transform.silver.cleaning - Fill operation completed
+2026-03-11 00:03:19,887 - INFO - src.etl.transform.silver.validate - Validating non-null values for columns: ['category_id', 'customer_id', 'department_id', 'order_customer_id', 'order_id', 'order_item_cardprod_id', 'order_item_id', 'product_card_id', 'product_category_id']
+2026-03-11 00:03:19,890 - INFO - src.etl.transform.silver.validate - Validating that the 'order_item_quantity' column contains no zeros
+2026-03-11 00:03:19,890 - INFO - src.etl.transform.silver.validate - Validating non-negative numeric columns
+2026-03-11 00:03:19,897 - INFO - src.etl.transform.silver.validate - Validating date order: order_date_dateorders <= shipping_date_dateorders
+2026-03-11 00:03:19,898 - INFO - src.etl.transform.silver.validate - Validating non-future date values
+2026-03-11 00:03:19,902 - INFO - src.etl.load.save_files - Saving CSV file: data/silver/supply_chain_silver.csv
+2026-03-11 00:03:23,399 - INFO - src.etl.load.save_files - Successfully saved file: data/silver/supply_chain_silver.csv
+2026-03-11 00:03:23,400 - INFO - src.etl.transform.gold.build - Starting Gold layer construction process...
+2026-03-11 00:03:23,400 - INFO - src.etl.transform.gold.build - Starting the construction of dim_customer...
+2026-03-11 00:03:23,518 - INFO - src.etl.transform.gold.build - dim_customer successfully built with 20641 rows and 11 columns.
+2026-03-11 00:03:23,519 - INFO - src.etl.transform.gold.build - Starting the construction of dim_product...
+2026-03-11 00:03:23,547 - INFO - src.etl.transform.gold.build - dim_product successfully built with 118 rows and 5 columns.
+2026-03-11 00:03:23,548 - INFO - src.etl.transform.gold.build - Starting the construction of dim_location...
+2026-03-11 00:03:23,612 - INFO - src.etl.transform.gold.build - dim_location successfully built with 3800 rows and 7 columns.
+2026-03-11 00:03:23,612 - INFO - src.etl.transform.gold.build - Starting the construction of dim_calendar...
+2026-03-11 00:03:23,664 - INFO - src.etl.transform.gold.build - dim_calendar successfully built with 1461 rows and 13 columns.
+2026-03-11 00:03:23,664 - INFO - src.etl.transform.gold.build - Starting the construction of fact_sales...
+2026-03-11 00:03:23,954 - INFO - src.etl.transform.gold.build - fact_sales successfully built with 180508 rows and 31 columns.
+2026-03-11 00:03:23,962 - INFO - src.etl.transform.gold.build - Gold layer packaged and ready to load.
+2026-03-11 00:03:23,962 - INFO - src.etl.load.load_gold - Starting the process of loading Gold tables into the database
+2026-03-11 00:03:23,962 - INFO - src.etl.load.load_gold - Starting database connection
+2026-03-11 00:03:24,026 - INFO - src.etl.load.load_gold - Connection established successfully
+2026-03-11 00:03:27,031 - INFO - src.etl.load.load_gold - Table dim_customer loaded successfully
+2026-03-11 00:03:27,180 - ERROR - src.etl.load.load_gold - Error loading table dim_product into the database: Execution failed on sql 'INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (:product_id, :product_name, :unit_price, :category, :department)': (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-11 00:03:27,181 - ERROR - src.etl.pipelines.pipeline - Execution stopped because of an error
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1679, in execute
+    return execute_function(sql, *args)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2133, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e,
+        ^^
+    ...<4 lines>...
+        is_sub_exec=True,
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Proyecto_Supply_Chain\src\etl\pipelines\pipeline.py", line 48, in run_pipeline
+    load_gold_to_supabase(gold_dict)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "c:\Proyecto_Supply_Chain\src\etl\load\load_gold.py", line 47, in load_gold_to_supabase
+    table.to_sql(
+    ~~~~~~~~~~~~^
+        name=table_name,
+        ^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        chunksize=1000
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\core\generic.py", line 3052, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 841, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 2037, in to_sql
+    total_inserted = sql_engine.insert_records(
+        table=table,
+    ...<7 lines>...
+        **engine_kwargs,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1571, in insert_records
+    return table.insert(chunksize=chunksize, method=method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1122, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1014, in _execute_insert
+    result = self.pd_sql.execute(self.table.insert(), data)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1681, in execute
+    raise DatabaseError(f"Execution failed on sql '{sql}': {exc}") from exc
+pandas.errors.DatabaseError: Execution failed on sql 'INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (:product_id, :product_name, :unit_price, :category, :department)': (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-11 00:03:27,191 - ERROR - __main__ - Critical error during ETL execution: Execution failed on sql 'INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (:product_id, :product_name, :unit_price, :category, :department)': (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1679, in execute
+    return execute_function(sql, *args)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2133, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e,
+        ^^
+    ...<4 lines>...
+        is_sub_exec=True,
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Proyecto_Supply_Chain\main.py", line 14, in main
+    run_pipeline()
+    ~~~~~~~~~~~~^^
+  File "c:\Proyecto_Supply_Chain\src\etl\pipelines\pipeline.py", line 48, in run_pipeline
+    load_gold_to_supabase(gold_dict)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "c:\Proyecto_Supply_Chain\src\etl\load\load_gold.py", line 47, in load_gold_to_supabase
+    table.to_sql(
+    ~~~~~~~~~~~~^
+        name=table_name,
+        ^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        chunksize=1000
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\core\generic.py", line 3052, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 841, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 2037, in to_sql
+    total_inserted = sql_engine.insert_records(
+        table=table,
+    ...<7 lines>...
+        **engine_kwargs,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1571, in insert_records
+    return table.insert(chunksize=chunksize, method=method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1122, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1014, in _execute_insert
+    result = self.pd_sql.execute(self.table.insert(), data)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1681, in execute
+    raise DatabaseError(f"Execution failed on sql '{sql}': {exc}") from exc
+pandas.errors.DatabaseError: Execution failed on sql 'INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (:product_id, :product_name, :unit_price, :category, :department)': (psycopg2.errors.UndefinedColumn) column "department" of relation "dim_product" does not exist
+LINE 1: ... (product_id, product_name, unit_price, category, department...
+                                                             ^
+
+[SQL: INSERT INTO gold.dim_product (product_id, product_name, unit_price, category, department) VALUES (%(product_id__0)s, %(product_name__0)s, %(unit_price__0)s, %(category__0)s, %(department__0)s), (%(product_id__1)s, %(product_name__1)s, %(unit_price__1 ... 11821 characters truncated ... oduct_id__117)s, %(product_name__117)s, %(unit_price__117)s, %(category__117)s, %(department__117)s)]
+[parameters: {'product_id__0': 1360, 'unit_price__0': 327.75, 'product_name__0': 'Smart Watch', 'category__0': 'Sporting Goods', 'department__0': 'Fitness', 'product_id__1': 365, 'unit_price__1': 59.99000168, 'product_name__1': 'Perfect Fitness Perfect Rip Deck', 'category__1': 'Cleats', 'department__1': 'Apparel', 'product_id__2': 627, 'unit_price__2': 39.99000168, 'product_name__2': "Under Armour Girls' Toddler Spine Surge Runni", 'category__2': 'Shop By Sport', 'department__2': 'Golf', 'product_id__3': 502, 'unit_price__3': 50.0, 'product_name__3': "Nike Men'S Dri-Fit Victory Golf Polo", 'category__3': "Women'S Apparel", 'department__3': 'Golf', 'product_id__4': 278, 'unit_price__4': 44.99000168, 'product_name__4': "Under Armour Men'S Compression Ev Sl Slide", 'category__4': 'Electronics', 'department__4': 'Footwear', 'product_id__5': 249, 'unit_price__5': 54.97000122, 'product_name__5': "Under Armour Women'S Micro G Skulpt Running S", 'category__5': 'Boxing & Mma', 'department__5': 'Footwear', 'product_id__6': 191, 'unit_price__6': 99.98999786, 'product_name__6': "Nike Men'S Free 5.0+ Running Shoe", 'category__6': 'Cardio Equipment', 'department__6': 'Footwear', 'product_id__7': 917, 'unit_price__7': 21.98999977, 'product_name__7': "Glove It Women'S Mod Oval 3-Zip Carry All Gol", 'category__7': 'Trade-In', 'department__7': 'Outdoors', 'product_id__8': 828, 'unit_price__8': 31.98999977, 'product_name__8': 'Bridgestone E6 Straight Distance Nfl San Dieg', 'category__8': 'Electronics', 'department__8': 'Outdoors', 'product_id__9': 642, 'unit_price__9': 30.0, 'product_name__9': "Columbia Men'S Pfg Anchor Tough T-Shirt", 'category__9': 'Shop By Sport', 'department__9': 'Golf' ... 490 parameters truncated ... 'product_id__108': 677, 'unit_price__108': 99.98999786, 'product_name__108': 'Taylormade White Smoke In-12 Putter', 'category__108': "Women'S Golf Clubs", 'department__108': 'Outdoors', 'product_id__109': 671, 'unit_price__109': 209.9900055, 'product_name__109': 'Cleveland Golf Collegiate My Custom Wedge 588', 'category__109': "Women'S Golf Clubs", 'department__109': 'Outdoors', 'product_id__110': 666, 'unit_price__110': 109.9899979, 'product_name__110': "Merrell Men'S All Out Flash Trail Running Sho", 'category__110': "Men'S Golf Clubs", 'department__110': 'Outdoors', 'product_id__111': 652, 'unit_price__111': 129.9900055, 'product_name__111': "Merrell Women'S Grassbow Sport Waterproof Hik", 'category__111': "Men'S Golf Clubs", 'department__111': 'Outdoors', 'product_id__112': 647, 'unit_price__112': 134.9900055, 'product_name__112': "Merrell Women'S Siren Mid Waterproof Hiking B", 'category__112': "Men'S Golf Clubs", 'department__112': 'Outdoors', 'product_id__113': 646, 'unit_price__113': 99.98999786, 'product_name__113': "Merrell Women'S Grassbow Sport Hiking Shoe", 'category__113': "Men'S Golf Clubs", 'department__113': 'Outdoors', 'product_id__114': 1361, 'unit_price__114': 11.53999996, 'product_name__114': 'Toys', 'category__114': 'Toys', 'department__114': 'Fan Shop', 'product_id__115': 1073, 'unit_price__115': 199.9900055, 'product_name__115': 'Pelican Sunstream 100 Kayak', 'category__115': 'Water Sports', 'department__115': 'Fan Shop', 'product_id__116': 1059, 'unit_price__116': 349.9899902, 'product_name__116': 'Pelican Maverick 100X Kayak', 'category__116': 'Water Sports', 'department__116': 'Fan Shop', 'product_id__117': 1014, 'unit_price__117': 49.97999954, 'product_name__117': "O'Brien Men'S Neoprene Life Vest", 'category__117': 'Indoor/Outdoor Games', 'department__117': 'Fan Shop'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-03-11 00:07:32,392 - INFO - __main__ - Starting ETL execution
+
+============================================================
+NEW EXECUTION PIPELINE - 2026-03-11 00:07:32
+
+============================================================
+2026-03-11 00:07:32,394 - INFO - src.etl.pipelines.pipeline - Pipeline Start
+2026-03-11 00:07:32,394 - INFO - src.etl.extract.extract_files - Reading CSV file: data/raw/supply_chain_raw.csv
+2026-03-11 00:07:33,700 - INFO - src.etl.extract.extract_files - Successfully read file: data/raw/supply_chain_raw.csv
+2026-03-11 00:07:33,700 - INFO - src.etl.transform.silver.normalize - Standardizing column names
+2026-03-11 00:07:33,740 - INFO - src.etl.transform.silver.normalize - Standardization completed
+2026-03-11 00:07:33,740 - INFO - src.etl.transform.silver.cleaning - Cleaning string values
+2026-03-11 00:07:35,083 - INFO - src.etl.transform.silver.cleaning - String cleaning completed
+2026-03-11 00:07:35,092 - INFO - src.etl.transform.silver.cleaning - Fixing data types
+2026-03-11 00:07:35,887 - INFO - src.etl.transform.silver.cleaning - Data type correction completed
+2026-03-11 00:07:35,920 - INFO - src.etl.transform.silver.cleaning - Dropping complete duplicates
+2026-03-11 00:07:36,344 - INFO - src.etl.transform.silver.cleaning - Complete duplicates removed
+2026-03-11 00:07:36,361 - INFO - src.etl.transform.silver.cleaning - Removing null values from columns: ['customer_lname', 'customer_zipcode']
+2026-03-11 00:07:36,455 - INFO - src.etl.transform.silver.cleaning - Null values removed
+2026-03-11 00:07:36,472 - INFO - src.etl.transform.silver.cleaning - Filling nulls in 'customer_zipcode' with 'Unknown'
+2026-03-11 00:07:36,501 - INFO - src.etl.transform.silver.cleaning - Fill operation completed
+2026-03-11 00:07:36,520 - INFO - src.etl.transform.silver.validate - Validating non-null values for columns: ['category_id', 'customer_id', 'department_id', 'order_customer_id', 'order_id', 'order_item_cardprod_id', 'order_item_id', 'product_card_id', 'product_category_id']
+2026-03-11 00:07:36,523 - INFO - src.etl.transform.silver.validate - Validating that the 'order_item_quantity' column contains no zeros
+2026-03-11 00:07:36,523 - INFO - src.etl.transform.silver.validate - Validating non-negative numeric columns
+2026-03-11 00:07:36,530 - INFO - src.etl.transform.silver.validate - Validating date order: order_date_dateorders <= shipping_date_dateorders
+2026-03-11 00:07:36,530 - INFO - src.etl.transform.silver.validate - Validating non-future date values
+2026-03-11 00:07:36,534 - INFO - src.etl.load.save_files - Saving CSV file: data/silver/supply_chain_silver.csv
+2026-03-11 00:07:39,987 - INFO - src.etl.load.save_files - Successfully saved file: data/silver/supply_chain_silver.csv
+2026-03-11 00:07:39,988 - INFO - src.etl.transform.gold.build - Starting Gold layer construction process...
+2026-03-11 00:07:39,988 - INFO - src.etl.transform.gold.build - Starting the construction of dim_customer...
+2026-03-11 00:07:40,105 - INFO - src.etl.transform.gold.build - dim_customer successfully built with 20641 rows and 11 columns.
+2026-03-11 00:07:40,105 - INFO - src.etl.transform.gold.build - Starting the construction of dim_product...
+2026-03-11 00:07:40,133 - INFO - src.etl.transform.gold.build - dim_product successfully built with 118 rows and 5 columns.
+2026-03-11 00:07:40,134 - INFO - src.etl.transform.gold.build - Starting the construction of dim_location...
+2026-03-11 00:07:40,196 - INFO - src.etl.transform.gold.build - dim_location successfully built with 3800 rows and 7 columns.
+2026-03-11 00:07:40,197 - INFO - src.etl.transform.gold.build - Starting the construction of dim_calendar...
+2026-03-11 00:07:40,247 - INFO - src.etl.transform.gold.build - dim_calendar successfully built with 1461 rows and 13 columns.
+2026-03-11 00:07:40,247 - INFO - src.etl.transform.gold.build - Starting the construction of fact_sales...
+2026-03-11 00:07:40,535 - INFO - src.etl.transform.gold.build - fact_sales successfully built with 180508 rows and 31 columns.
+2026-03-11 00:07:40,542 - INFO - src.etl.transform.gold.build - Gold layer packaged and ready to load.
+2026-03-11 00:07:40,542 - INFO - src.etl.load.load_gold - Starting the process of loading Gold tables into the database
+2026-03-11 00:07:40,542 - INFO - src.etl.load.load_gold - Starting database connection
+2026-03-11 00:07:40,606 - INFO - src.etl.load.load_gold - Connection established successfully
+2026-03-11 00:07:41,548 - ERROR - src.etl.load.load_gold - Error loading table dim_customer into the database: Execution failed on sql 'INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (:customer_id, :first_name, :last_name, :country, :state_name, :city, :street, :zipcode, :longitude, :latitude, :segment)': (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-11 00:07:41,548 - ERROR - src.etl.pipelines.pipeline - Execution stopped because of an error
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1679, in execute
+    return execute_function(sql, *args)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2133, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e,
+        ^^
+    ...<4 lines>...
+        is_sub_exec=True,
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Proyecto_Supply_Chain\src\etl\pipelines\pipeline.py", line 48, in run_pipeline
+    load_gold_to_supabase(gold_dict)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "c:\Proyecto_Supply_Chain\src\etl\load\load_gold.py", line 47, in load_gold_to_supabase
+    table.to_sql(
+    ~~~~~~~~~~~~^
+        name=table_name,
+        ^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        chunksize=1000
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\core\generic.py", line 3052, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 841, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 2037, in to_sql
+    total_inserted = sql_engine.insert_records(
+        table=table,
+    ...<7 lines>...
+        **engine_kwargs,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1571, in insert_records
+    return table.insert(chunksize=chunksize, method=method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1122, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1014, in _execute_insert
+    result = self.pd_sql.execute(self.table.insert(), data)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1681, in execute
+    raise DatabaseError(f"Execution failed on sql '{sql}': {exc}") from exc
+pandas.errors.DatabaseError: Execution failed on sql 'INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (:customer_id, :first_name, :last_name, :country, :state_name, :city, :street, :zipcode, :longitude, :latitude, :segment)': (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-11 00:07:41,561 - ERROR - __main__ - Critical error during ETL execution: Execution failed on sql 'INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (:customer_id, :first_name, :last_name, :country, :state_name, :city, :street, :zipcode, :longitude, :latitude, :segment)': (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1679, in execute
+    return execute_function(sql, *args)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2133, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e,
+        ^^
+    ...<4 lines>...
+        is_sub_exec=True,
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2125, in _exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Proyecto_Supply_Chain\main.py", line 14, in main
+    run_pipeline()
+    ~~~~~~~~~~~~^^
+  File "c:\Proyecto_Supply_Chain\src\etl\pipelines\pipeline.py", line 48, in run_pipeline
+    load_gold_to_supabase(gold_dict)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "c:\Proyecto_Supply_Chain\src\etl\load\load_gold.py", line 47, in load_gold_to_supabase
+    table.to_sql(
+    ~~~~~~~~~~~~^
+        name=table_name,
+        ^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        chunksize=1000
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\core\generic.py", line 3052, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 841, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 2037, in to_sql
+    total_inserted = sql_engine.insert_records(
+        table=table,
+    ...<7 lines>...
+        **engine_kwargs,
+    )
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1571, in insert_records
+    return table.insert(chunksize=chunksize, method=method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1122, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1014, in _execute_insert
+    result = self.pd_sql.execute(self.table.insert(), data)
+  File "C:\Proyecto_Supply_Chain\venv\Lib\site-packages\pandas\io\sql.py", line 1681, in execute
+    raise DatabaseError(f"Execution failed on sql '{sql}': {exc}") from exc
+pandas.errors.DatabaseError: Execution failed on sql 'INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (:customer_id, :first_name, :last_name, :country, :state_name, :city, :street, :zipcode, :longitude, :latitude, :segment)': (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "dim_customer_pkey"
+DETAIL:  Key (customer_id)=(20755) already exists.
+
+[SQL: INSERT INTO gold.dim_customer (customer_id, first_name, last_name, country, state_name, city, street, zipcode, longitude, latitude, segment) VALUES (%(customer_id__0)s, %(first_name__0)s, %(last_name__0)s, %(country__0)s, %(state_name__0)s, %(city__0 ... 209586 characters truncated ... __999)s, %(street__999)s, %(zipcode__999)s, %(longitude__999)s, %(latitude__999)s, %(segment__999)s)]
+[parameters: {'first_name__0': 'Cally', 'city__0': 'Caguas', 'segment__0': 'Consumer', 'state_name__0': 'PR', 'longitude__0': -66.03705597, 'zipcode__0': '725.0', 'customer_id__0': 20755, 'latitude__0': 18.2514534, 'last_name__0': 'Holloway', 'street__0': '5365 Noble Nectar Island', 'country__0': 'Puerto Rico', 'first_name__1': 'Irene', 'city__1': 'Caguas', 'segment__1': 'Consumer', 'state_name__1': 'PR', 'longitude__1': -66.0370636, 'zipcode__1': '725.0', 'customer_id__1': 19492, 'latitude__1': 18.27945137, 'last_name__1': 'Luna', 'street__1': '2679 Rustic Loop', 'country__1': 'Puerto Rico', 'first_name__2': 'Gillian', 'city__2': 'San Jose', 'segment__2': 'Consumer', 'state_name__2': 'CA', 'longitude__2': -121.881279, 'zipcode__2': '95125.0', 'customer_id__2': 19491, 'latitude__2': 37.29223251, 'last_name__2': 'Maldonado', 'street__2': '8510 Round Bear Gate', 'country__2': 'EE. UU.', 'first_name__3': 'Tana', 'city__3': 'Los Angeles', 'segment__3': 'Home Office', 'state_name__3': 'CA', 'longitude__3': -118.2910156, 'zipcode__3': '90027.0', 'customer_id__3': 19490, 'latitude__3': 34.12594605, 'last_name__3': 'Tate', 'street__3': '3200 Amber Bend', 'country__3': 'EE. UU.', 'first_name__4': 'Orli', 'city__4': 'Caguas', 'segment__4': 'Corporate', 'state_name__4': 'PR', 'longitude__4': -66.03704834, 'zipcode__4': '725.0' ... 10900 parameters truncated ... 'zipcode__995': '11419.0', 'customer_id__995': 19284, 'latitude__995': 40.68805313, 'last_name__995': 'Burt', 'street__995': '5098 Lazy Pathway', 'country__995': 'EE. UU.', 'first_name__996': 'Nayda', 'city__996': 'Caguas', 'segment__996': 'Consumer', 'state_name__996': 'PR', 'longitude__996': -66.0370636, 'zipcode__996': '725.0', 'customer_id__996': 19283, 'latitude__996': 18.21238518, 'last_name__996': 'Mason', 'street__996': '1996 Crystal Via', 'country__996': 'Puerto Rico', 'first_name__997': 'Raya', 'city__997': 'Middletown', 'segment__997': 'Corporate', 'state_name__997': 'OH', 'longitude__997': -84.4282074, 'zipcode__997': '45044.0', 'customer_id__997': 19282, 'latitude__997': 39.44261551, 'last_name__997': 'Lee', 'street__997': '5824 Honey Glade', 'country__997': 'EE. UU.', 'first_name__998': 'Quyn', 'city__998': 'Gilroy', 'segment__998': 'Consumer', 'state_name__998': 'CA', 'longitude__998': -121.5893478, 'zipcode__998': '95020.0', 'customer_id__998': 16774, 'latitude__998': 37.01370621, 'last_name__998': 'Mckinney', 'street__998': '9666 Colonial Hickory Thicket', 'country__998': 'EE. UU.', 'first_name__999': 'Hilary', 'city__999': 'Caguas', 'segment__999': 'Consumer', 'state_name__999': 'PR', 'longitude__999': -66.03705597, 'zipcode__999': '725.0', 'customer_id__999': 16773, 'latitude__999': 18.29462624, 'last_name__999': 'Wynn', 'street__999': '9739 Round Spring Expressway', 'country__999': 'Puerto Rico'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-11 00:09:24,229 - INFO - __main__ - Starting ETL execution
+
+============================================================
+NEW EXECUTION PIPELINE - 2026-03-11 00:09:24
+
+============================================================
+2026-03-11 00:09:24,229 - INFO - src.etl.pipelines.pipeline - Pipeline Start
+2026-03-11 00:09:24,229 - INFO - src.etl.extract.extract_files - Reading CSV file: data/raw/supply_chain_raw.csv
+2026-03-11 00:09:25,586 - INFO - src.etl.extract.extract_files - Successfully read file: data/raw/supply_chain_raw.csv
+2026-03-11 00:09:25,586 - INFO - src.etl.transform.silver.normalize - Standardizing column names
+2026-03-11 00:09:25,626 - INFO - src.etl.transform.silver.normalize - Standardization completed
+2026-03-11 00:09:25,626 - INFO - src.etl.transform.silver.cleaning - Cleaning string values
+2026-03-11 00:09:26,987 - INFO - src.etl.transform.silver.cleaning - String cleaning completed
+2026-03-11 00:09:26,997 - INFO - src.etl.transform.silver.cleaning - Fixing data types
+2026-03-11 00:09:27,829 - INFO - src.etl.transform.silver.cleaning - Data type correction completed
+2026-03-11 00:09:27,865 - INFO - src.etl.transform.silver.cleaning - Dropping complete duplicates
+2026-03-11 00:09:28,320 - INFO - src.etl.transform.silver.cleaning - Complete duplicates removed
+2026-03-11 00:09:28,339 - INFO - src.etl.transform.silver.cleaning - Removing null values from columns: ['customer_lname', 'customer_zipcode']
+2026-03-11 00:09:28,435 - INFO - src.etl.transform.silver.cleaning - Null values removed
+2026-03-11 00:09:28,453 - INFO - src.etl.transform.silver.cleaning - Filling nulls in 'customer_zipcode' with 'Unknown'
+2026-03-11 00:09:28,491 - INFO - src.etl.transform.silver.cleaning - Fill operation completed
+2026-03-11 00:09:28,513 - INFO - src.etl.transform.silver.validate - Validating non-null values for columns: ['category_id', 'customer_id', 'department_id', 'order_customer_id', 'order_id', 'order_item_cardprod_id', 'order_item_id', 'product_card_id', 'product_category_id']
+2026-03-11 00:09:28,516 - INFO - src.etl.transform.silver.validate - Validating that the 'order_item_quantity' column contains no zeros
+2026-03-11 00:09:28,517 - INFO - src.etl.transform.silver.validate - Validating non-negative numeric columns
+2026-03-11 00:09:28,524 - INFO - src.etl.transform.silver.validate - Validating date order: order_date_dateorders <= shipping_date_dateorders
+2026-03-11 00:09:28,525 - INFO - src.etl.transform.silver.validate - Validating non-future date values
+2026-03-11 00:09:28,526 - INFO - src.etl.load.save_files - Saving CSV file: data/silver/supply_chain_silver.csv
+2026-03-11 00:09:32,121 - INFO - src.etl.load.save_files - Successfully saved file: data/silver/supply_chain_silver.csv
+2026-03-11 00:09:32,121 - INFO - src.etl.transform.gold.build - Starting Gold layer construction process...
+2026-03-11 00:09:32,121 - INFO - src.etl.transform.gold.build - Starting the construction of dim_customer...
+2026-03-11 00:09:32,256 - INFO - src.etl.transform.gold.build - dim_customer successfully built with 20641 rows and 11 columns.
+2026-03-11 00:09:32,256 - INFO - src.etl.transform.gold.build - Starting the construction of dim_product...
+2026-03-11 00:09:32,285 - INFO - src.etl.transform.gold.build - dim_product successfully built with 118 rows and 5 columns.
+2026-03-11 00:09:32,285 - INFO - src.etl.transform.gold.build - Starting the construction of dim_location...
+2026-03-11 00:09:32,349 - INFO - src.etl.transform.gold.build - dim_location successfully built with 3800 rows and 7 columns.
+2026-03-11 00:09:32,349 - INFO - src.etl.transform.gold.build - Starting the construction of dim_calendar...
+2026-03-11 00:09:32,397 - INFO - src.etl.transform.gold.build - dim_calendar successfully built with 1461 rows and 13 columns.
+2026-03-11 00:09:32,397 - INFO - src.etl.transform.gold.build - Starting the construction of fact_sales...
+2026-03-11 00:09:32,681 - INFO - src.etl.transform.gold.build - fact_sales successfully built with 180508 rows and 31 columns.
+2026-03-11 00:09:32,688 - INFO - src.etl.transform.gold.build - Gold layer packaged and ready to load.
+2026-03-11 00:09:32,689 - INFO - src.etl.load.load_gold - Starting the process of loading Gold tables into the database
+2026-03-11 00:09:32,689 - INFO - src.etl.load.load_gold - Starting database connection
+2026-03-11 00:09:32,732 - INFO - src.etl.load.load_gold - Connection established successfully
+2026-03-11 00:09:35,376 - INFO - src.etl.load.load_gold - Table dim_customer loaded successfully
+2026-03-11 00:09:35,521 - INFO - src.etl.load.load_gold - Table dim_product loaded successfully
+2026-03-11 00:09:35,895 - INFO - src.etl.load.load_gold - Table dim_location loaded successfully
+2026-03-11 00:09:36,150 - INFO - src.etl.load.load_gold - Table dim_calendar loaded successfully
+2026-03-11 00:10:07,535 - INFO - src.etl.load.load_gold - Table fact_sales loaded successfully
+2026-03-11 00:10:07,592 - INFO - __main__ - ETL completed successfully

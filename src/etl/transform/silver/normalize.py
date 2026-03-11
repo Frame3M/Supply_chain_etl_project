@@ -23,7 +23,7 @@ def standarize_columns(df: pd.DataFrame) -> pd.DataFrame:
         raise
     
     try:
-        df.colums = (
+        df.columns = (
             df.columns
             .str.strip()
             .str.lower()

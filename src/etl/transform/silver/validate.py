@@ -15,7 +15,7 @@ def validate_non_negative_columns(df: pd.DataFrame, except_cols: list[str] = [])
     
     logger.info("Validating non-negative numeric columns")
     
-    numeric_cols = df.select_dtypes('float64','Float64','int64','Int64').columns.difference(except_cols)
+    numeric_cols = df.select_dtypes(include=['float64','Float64','int64','Int64']).columns.difference(except_cols)
     for col in numeric_cols:
         invalid = (df[col] < 0).sum()
         if invalid > 0:

@@ -36,9 +36,9 @@ def build_dim_customer(df: pd.DataFrame) -> pd.DataFrame:
     })\
     .copy()
     
-    dim_customer.columns = [col.replace('customer_id', '') if col != 'customer_id' else col for col in dim_customer.columns]
+    dim_customer.columns = [col.replace('customer_', '') if col != 'customer_id' else col for col in dim_customer.columns]
     
-    logger.info(f"dim_customer successfully built with {dim_customer.shape(0)} rows and {dim_customer.shape(1)} columns.")
+    logger.info(f"dim_customer successfully built with {dim_customer.shape[0]} rows and {dim_customer.shape[1]} columns.")
     
     return dim_customer
 
@@ -70,7 +70,7 @@ def build_dim_product(df: pd.DataFrame) -> pd.DataFrame:
     })\
     .copy()
     
-    logger.info(f"dim_product successfully built with {dim_product.shape(0)} rows and {dim_product.shape(1)} columns.")
+    logger.info(f"dim_product successfully built with {dim_product.shape[0]} rows and {dim_product.shape[1]} columns.")
     
     return dim_product
 
@@ -103,7 +103,7 @@ def build_dim_location(df: pd.DataFrame) -> pd.DataFrame:
     dim_location.columns = dim_location.columns.str.replace('order_', '')
     dim_location.insert(0, 'location_id', dim_location.index + 1)
     
-    logger.info(f"dim_location successfully built with {dim_location.shape(0)} rows and {dim_location.shape(1)} columns.")
+    logger.info(f"dim_location successfully built with {dim_location.shape[0]} rows and {dim_location.shape[1]} columns.")
     
     return dim_location
     
@@ -147,7 +147,7 @@ def build_dim_calendar(df: pd.DataFrame) -> pd.DataFrame:
     
     dim_calendar['full_date'] = dim_calendar['full_date'].dt.date
     
-    logger.info(f"dim_calendar successfully built with {dim_calendar.shape(0)} rows and {dim_calendar.shape(1)} columns.")
+    logger.info(f"dim_calendar successfully built with {dim_calendar.shape[0]} rows and {dim_calendar.shape[1]} columns.")
     
     return dim_calendar
     
@@ -210,7 +210,7 @@ def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFra
     .copy()
     
     fact_sales_col = ['market', 'order_country', 'order_region', 'order_state', 'order_city', 'order_zipcode']
-    dim_loc_col = ['market', 'country', 'region', 'state', 'city', 'zipcode']
+    dim_loc_col = ['market', 'country', 'region', 'state_name', 'city', 'zipcode']
     
     fact_sales = fact_sales.merge(
         dim_location,
@@ -226,7 +226,7 @@ def build_fact_sales(df: pd.DataFrame, dim_location: pd.DataFrame) -> pd.DataFra
                   'order_date', 'customer_id', 'payment_type', 'order_status', 'location_id', 'shipping_mode', 'shipping_date', 'late_delivery_risk',
                   'delivery_status', 'days_for_shipment_scheduled', 'days_for_shipping_real']
     
-    logger.info(f"fact_sales successfully built with {fact_sales.shape(0)} rows and {fact_sales.shape(1)} columns.")
+    logger.info(f"fact_sales successfully built with {fact_sales.shape[0]} rows and {fact_sales.shape[1]} columns.")
     
     return fact_sales[final_cols]
     
