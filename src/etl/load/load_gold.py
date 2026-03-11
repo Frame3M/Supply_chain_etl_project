@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError, ProgrammingError
 from dotenv import load_dotenv
 from src.utils.logger import get_logger
 
@@ -54,6 +55,14 @@ def load_gold_to_supabase(gold_dict: dict) -> None:
             )
             
             logger.info(f"Table {table_name} loaded successfully")
+        
+        except ProgrammingError as e:
+            logger.error(f"Syntax or column error in the database: {e.orig}")
+            raise
+        
+        except IntegrityError as e:
+            logger.error(f"Data integrity error (duplicate or orphaned IDs): {e.orig}")
+            raise
             
         except Exception as e:
             logger.error(f"Error loading table {table_name} into the database: {e}")
