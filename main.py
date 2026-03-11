@@ -8,14 +8,14 @@ def main() -> None:
     
     """
     
-    logger.info("Iniciando ejecucion del ETL")
+    logger.info("Starting ETL execution")
     
     try:
         run_pipeline()
-        logger.info("ETL finalizado correctamente")
+        logger.info("ETL completed successfully")
         
     except Exception as e:
-        logger.exception(f"Error critico durante la ejecucion del ETL: {e}")
+        logger.exception(f"Critical error during ETL execution: {e}")
         
 
 if __name__ == "__main__":
