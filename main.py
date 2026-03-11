@@ -5,7 +5,7 @@ logger = get_logger(__name__)
 
 def main() -> None:
     """
-    
+    Executes the complete ETL pipeline.
     """
     
     logger.info("Starting ETL execution")

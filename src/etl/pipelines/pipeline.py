@@ -9,19 +9,19 @@ from utils.logger import log_header, get_logger
 
 logger = get_logger(__name__)
 
-def run_pipeline():
+def run_pipeline() -> None:
     """
     Orchestrates all ETL stages.
     Each step logs its execution and allows failures to be isolated by stage
     """
     
-    #
+    # Initializing logger
     log_header(logger)
     logger.info("Pipeline Start")
     
     try:
         # Extract data
-        df_raw = extract_from_csv(path= '../../../data/raw/supply_chain_raw.csv', enconding= 'cp1252')
+        df_raw = extract_from_csv(path= '../../../data/raw/supply_chain_raw.csv', encoding= 'cp1252')
         
         # Transformations
         df = standarize_columns(df_raw)
