@@ -39,6 +39,8 @@ Los datos procesados en la Capa Oro (Gold Layer) se estructuraron bajo un **Mode
     * `dim_location`: Jerarquía espacial para envíos (mercado, región, país, etc).
     * `dim_calendar`: Dimensión de fechas generada para soportar análisis de inteligencia de tiempo (tendencias interanuales y variaciones mensuales).
 
+<img width="1360" height="635" alt="database" src="https://github.com/user-attachments/assets/63595666-aca8-4538-b570-c8c3b9ca37bd" />
+
 ---
 
 ## 🖥️ Resumen de las Páginas del Dashboard
