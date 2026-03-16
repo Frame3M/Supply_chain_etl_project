@@ -23,7 +23,7 @@ Dataset: https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-
 * **Base de Datos en la Nube:** Supabase (PostgreSQL) para un almacenamiento seguro y escalable.
 * **Inteligencia de Negocios (BI):** Power BI Desktop (Modelado de Datos, UI/UX y Storytelling).
 
-<img width="1536" height="1024" alt="arquitectura" src="https://github.com/user-attachments/assets/6d45453d-c2be-4ec5-8c55-75542b71d279" />
+<img width="1536" height="1024" alt="arquitectura2" src="https://github.com/user-attachments/assets/22c4b045-4f97-42c3-83b3-72261647c67a" />
 
 ---
 
