@@ -1,0 +1,57 @@
+2026-03-16 15:22:48,715 - INFO - __main__ - Starting ETL execution
+
+============================================================
+NEW EXECUTION PIPELINE - 2026-03-16 15:22:48
+
+============================================================
+2026-03-16 15:22:48,716 - INFO - src.etl.pipelines.pipeline - Pipeline Start
+2026-03-16 15:22:48,716 - INFO - src.etl.extract.extract_files - Reading CSV file: data/raw/supply_chain_raw.csv
+2026-03-16 15:25:17,225 - INFO - __main__ - Starting ETL execution
+
+============================================================
+NEW EXECUTION PIPELINE - 2026-03-16 15:25:17
+
+============================================================
+2026-03-16 15:25:17,227 - INFO - src.etl.pipelines.pipeline - Pipeline Start
+2026-03-16 15:25:17,227 - INFO - src.etl.extract.extract_files - Reading CSV file: data/raw/supply_chain_raw.csv
+2026-03-16 15:25:18,420 - INFO - src.etl.extract.extract_files - Successfully read file: data/raw/supply_chain_raw.csv
+2026-03-16 15:25:18,420 - INFO - src.etl.transform.silver.normalize - Standardizing column names
+2026-03-16 15:25:18,477 - INFO - src.etl.transform.silver.normalize - Standardization completed
+2026-03-16 15:25:18,478 - INFO - src.etl.transform.silver.cleaning - Cleaning string values
+2026-03-16 15:25:19,919 - INFO - src.etl.transform.silver.cleaning - String cleaning completed
+2026-03-16 15:25:19,931 - INFO - src.etl.transform.silver.cleaning - Fixing data types
+2026-03-16 15:25:20,784 - INFO - src.etl.transform.silver.cleaning - Data type correction completed
+2026-03-16 15:25:20,830 - INFO - src.etl.transform.silver.cleaning - Dropping complete duplicates
+2026-03-16 15:25:21,301 - INFO - src.etl.transform.silver.cleaning - Complete duplicates removed
+2026-03-16 15:25:21,322 - INFO - src.etl.transform.silver.cleaning - Removing null values from columns: ['customer_lname', 'customer_zipcode']
+2026-03-16 15:25:21,418 - INFO - src.etl.transform.silver.cleaning - Null values removed
+2026-03-16 15:25:21,438 - INFO - src.etl.transform.silver.cleaning - Filling nulls in 'customer_zipcode' with 'Unknown'
+2026-03-16 15:25:21,468 - INFO - src.etl.transform.silver.cleaning - Fill operation completed
+2026-03-16 15:25:21,486 - INFO - src.etl.transform.silver.validate - Validating non-null values for columns: ['category_id', 'customer_id', 'department_id', 'order_customer_id', 'order_id', 'order_item_cardprod_id', 'order_item_id', 'product_card_id', 'product_category_id']
+2026-03-16 15:25:21,489 - INFO - src.etl.transform.silver.validate - Validating that the 'order_item_quantity' column contains no zeros
+2026-03-16 15:25:21,490 - INFO - src.etl.transform.silver.validate - Validating non-negative numeric columns
+2026-03-16 15:25:21,496 - INFO - src.etl.transform.silver.validate - Validating date order: order_date_dateorders <= shipping_date_dateorders
+2026-03-16 15:25:21,497 - INFO - src.etl.transform.silver.validate - Validating non-future date values
+2026-03-16 15:25:21,501 - INFO - src.etl.load.save_files - Saving CSV file: data/silver/supply_chain_silver.csv
+2026-03-16 15:25:25,050 - INFO - src.etl.load.save_files - Successfully saved file: data/silver/supply_chain_silver.csv
+2026-03-16 15:25:25,050 - INFO - src.etl.transform.gold.build - Starting Gold layer construction process...
+2026-03-16 15:25:25,050 - INFO - src.etl.transform.gold.build - Starting the construction of dim_customer...
+2026-03-16 15:25:25,164 - INFO - src.etl.transform.gold.build - dim_customer successfully built with 20641 rows and 11 columns.
+2026-03-16 15:25:25,164 - INFO - src.etl.transform.gold.build - Starting the construction of dim_product...
+2026-03-16 15:25:25,193 - INFO - src.etl.transform.gold.build - dim_product successfully built with 118 rows and 5 columns.
+2026-03-16 15:25:25,193 - INFO - src.etl.transform.gold.build - Starting the construction of dim_location...
+2026-03-16 15:25:25,255 - INFO - src.etl.transform.gold.build - dim_location successfully built with 3800 rows and 7 columns.
+2026-03-16 15:25:25,255 - INFO - src.etl.transform.gold.build - Starting the construction of dim_calendar...
+2026-03-16 15:25:25,305 - INFO - src.etl.transform.gold.build - dim_calendar successfully built with 1461 rows and 13 columns.
+2026-03-16 15:25:25,305 - INFO - src.etl.transform.gold.build - Starting the construction of fact_sales...
+2026-03-16 15:25:25,602 - INFO - src.etl.transform.gold.build - fact_sales successfully built with 180508 rows and 31 columns.
+2026-03-16 15:25:25,609 - INFO - src.etl.transform.gold.build - Gold layer packaged and ready to load.
+2026-03-16 15:25:25,609 - INFO - src.etl.load.load_gold - Starting the process of loading Gold tables into the database
+2026-03-16 15:25:25,609 - INFO - src.etl.load.load_gold - Starting database connection
+2026-03-16 15:25:25,809 - INFO - src.etl.load.load_gold - Connection established successfully
+2026-03-16 15:25:29,136 - INFO - src.etl.load.load_gold - Table dim_customer loaded successfully
+2026-03-16 15:25:29,296 - INFO - src.etl.load.load_gold - Table dim_product loaded successfully
+2026-03-16 15:25:29,728 - INFO - src.etl.load.load_gold - Table dim_location loaded successfully
+2026-03-16 15:25:30,012 - INFO - src.etl.load.load_gold - Table dim_calendar loaded successfully
+2026-03-16 15:26:05,218 - INFO - src.etl.load.load_gold - Table fact_sales loaded successfully
+2026-03-16 15:26:05,283 - INFO - __main__ - ETL completed successfully
